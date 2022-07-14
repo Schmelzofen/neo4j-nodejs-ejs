@@ -1,6 +1,8 @@
 const express = require("express");
-const app = express();
+const bodyParser = require("body-parser");
 require("dotenv").config();
+
+const app = express();
 
 // neo4j-driver
 const neo4j = require("neo4j-driver");
@@ -23,15 +25,17 @@ const getNodesByCypher = async function (cypher) {
 // "result" comes from getNodes (promise)
 // console.log(result.records[0]._fields)
 
-app.set("view engine", "ejs")
-app.use(express.static(__dirname + "/public"))
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
     res.render("pages/index")
 })
 
-app.get("/movies", (req, res) => {
-    res.render("pages/movies")
+app.get("/search", (req, res) => {
+    res.render("pages/search")
 })
 
 app.get("/database", (req, res) => {
@@ -54,6 +58,22 @@ app.get("/data/actors", (req, res) => {
         .then((result) => {
             res.json(result.records)
         })
+})
+
+// route for accepting the querry for the search
+app.post("/data/querry", (req, res) => {
+    console.log(req.body)
+    if (req.body.property == "Person") {
+        getNodesByCypher(`MATCH (n:Person) WHERE n.name CONTAINS "${req.body.query}" RETURN n`)
+            .then((result) => {
+                console.log(result.records)
+            })
+    } else {
+        getNodesByCypher(`MATCH (n:Movie) WHERE n.title CONTAINS "${req.body.query}" RETURN n`)
+            .then((result) => {
+                console.log(result.records)
+            })
+    }
 })
 
 

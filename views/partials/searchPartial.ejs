@@ -1,0 +1,16 @@
+<main>
+    <h1>Search for a movie or an actor</h1>
+    <div class="searchBox">
+        <form onsubmit="return false">
+            <input type="text" name="search" id="inputSearch">
+            <select name="property" id="propertySelect">
+                <option value="Person">Person</option>
+                <option value="Movie">Movie</option>
+            </select>
+            <button onclick="sendInput()">search</button>
+        </form>
+        <div class="searchOutput">
+            <h1>Output</h1>
+        </div>
+    </div>
+</main>
